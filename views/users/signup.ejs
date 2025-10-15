@@ -1,0 +1,139 @@
+<!-- <% layout("/layouts/boilerplate") %>
+<div class="row mt-3">
+  <h1 class="col-6 offset-3">Signup on Wanderlust</h1>
+  <div class="col-6 offset-3">
+    <form action="/signup" method="post" novalidate class="needs-validation">
+      <div class="mb-3">
+        <label for="username" class="form-lable">Username</label>
+        <input
+          type="text"
+          name="username"
+          class="form-control"
+          id="username"
+          required
+        />
+        <div class="valid-feedback">Looks good!</div>
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-lable">Email</label>
+        <input
+          type="email"
+          name="email"
+          class="form-control"
+          id="email"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-lable">Password</label>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          class="form-control"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="confirmPassword" class="form-lable">Confirm Password</label>
+        <input
+          type="password"
+          name="confirmPassword"
+          id="confirmPassword"
+          class="form-control"
+          required
+        />
+      </div>
+      <div class="btns" style="display: flex; justify-content: space-between">
+        <button class="btn btn-success">Signup</button>
+        <button class="btn btn-secondary" type="reset">Reset</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/js/signupValidation.js"></script> -->
+
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-3">
+  <h1 class="col-6 offset-3">Signup on Wanderlust</h1>
+  <div class="col-6 offset-3">
+    <form id="signupForm" action="/signup" method="post" novalidate>
+      <!-- Username -->
+      <div class="mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <label for="username" class="form-label mb-0 fw-medium"
+            >Username<span style="color: red">*</span> :
+          </label>
+          <span class="text-danger small" id="usernameError"></span>
+        </div>
+        <input
+          type="text"
+          name="username"
+          class="form-control"
+          id="username"
+          required
+        />
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <label for="email" class="form-label mb-0 fw-medium"
+            >Email<span style="color: red">*</span> :
+          </label>
+          <span class="text-danger small" id="emailError"></span>
+        </div>
+        <input
+          type="email"
+          name="email"
+          class="form-control"
+          id="email"
+          required
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <label for="password" class="form-label mb-0 fw-medium"
+            >Password<span style="color: red">*</span> :
+          </label>
+          <span class="text-danger small" id="passwordError"></span>
+        </div>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          class="form-control"
+          required
+        />
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <label for="confirmPassword" class="form-label mb-0 fw-medium"
+            >Confirm Password<span style="color: red">*</span> :
+          </label>
+          <span class="text-danger small" id="confirmPasswordError"></span>
+        </div>
+        <input
+          type="password"
+          name="confirmPassword"
+          id="confirmPassword"
+          class="form-control"
+          required
+        />
+      </div>
+
+      <div class="btns d-flex justify-content-between">
+        <button class="btn btn-success" type="submit">Signup</button>
+        <button class="btn btn-secondary" type="reset">Reset</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/js/signupValidation.js"></script>

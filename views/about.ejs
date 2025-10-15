@@ -1,0 +1,160 @@
+<% layout('/layouts/boilerplate') %>
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <h1 class="display-5 fw-bold">About WanderLust</h1>
+        <p class="lead mb-4">
+          WanderLust helps travellers discover unique places to stay — from cosy
+          homestays and boutique guesthouses to villas and farmhouses. We are a
+          discovery platform, not a booking engine: you can search listings,
+          read details, and contact hosts directly or add your own listing to
+          share with other travellers.
+        </p>
+
+        <ul class="list-unstyled">
+          <li class="mb-2">
+            • <strong>Search listings</strong> — find stays using the search bar
+            by location, type, or features.
+          </li>
+          <li class="mb-2">
+            • <strong>Browse details</strong> — each listing shows photos,
+            description, amenities, and host contact info.
+          </li>
+          <li class="mb-2">
+            • <strong>Add your listing</strong> — hosting is simple: create a
+            listing and upload photos so travellers can discover your place.
+          </li>
+        </ul>
+
+        <a
+          href="/listings"
+          class="btn btn-primary me-2 btns"
+          style="background-color: #fe424d; border: none"
+          >Browse listings</a
+        >
+        <a href="/listings/new" class="btn btn-outline-secondary"
+          >Add a listing</a
+        >
+      </div>
+
+      <div class="col-md-6 text-center imgDiv">
+        <img
+          src="/images/WanderLustAbout.webp"
+          alt="WanderLust - travel stays"
+          class="img-fluid rounded shadow-sm"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Our Mission</h5>
+            <p class="card-text">
+              To make discovering great places to stay simple and trustworthy.
+              We focus on clear listings, beautiful photos, and easy ways for
+              hosts and travellers to connect.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">How it works</h5>
+            <p class="card-text">
+              Use the search bar to filter by city, type (villa, farmhouse,
+              guesthouse), price range and amenities. Click a listing to see
+              photos and host details. Contact the host directly from the
+              listing page.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Host with us</h5>
+            <p class="card-text">
+              Want travellers to discover your property? Add a listing in
+              minutes — upload images, write a description, set amenities and
+              your contact details. We make listing management easy.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5 bg-dark text-white">
+  <div class="container text-center">
+    <h2 class="h3 mb-3">Safety & Trust</h2>
+    <p class="mb-4">
+      We encourage honest descriptions and clear photos. Hosts and travellers
+      can message each other directly — always confirm details with the host
+      before travelling.
+    </p>
+    <a href="#" class="btn btn-light">Learn more</a>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h3>Want to be featured?</h3>
+        <p>
+          We highlight interesting and well-presented listings on our homepage.
+          Make sure your listing has great photos and a helpful description.
+        </p>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <a
+          href="/listings/new"
+          class="btn btn-primary me-2 btns"
+          style="background-color: #fe424d; border: none"
+          >Add your listing</a
+        >
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .btns:hover {
+    opacity: 90%;
+  }
+  .display-4 {
+    font-weight: 700;
+  }
+  .lead {
+    font-size: 1.2rem;
+  }
+  hr {
+    border-top: 2px solid #eee;
+  }
+  .bi {
+    color: #0d6efd;
+  }
+
+  .card {
+    transition: transform 0.15s ease-in-out;
+  }
+
+  .card:hover {
+    transform: scale(1);
+  }
+
+  .imgDiv :hover {
+    opacity: 90%;
+  }
+</style>
