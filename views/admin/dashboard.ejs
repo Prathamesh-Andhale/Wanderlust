@@ -1,0 +1,212 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-4">
+  <div class="col-12">
+    <h2 class="mb-4 text-danger"><i class="fa-solid fa-lock me-2"></i>Admin Dashboard</h2>
+
+    <!-- Stats Cards -->
+    <div class="row g-3 mb-5">
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0 bg-primary text-white p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="mb-1">Total Users</h6>
+              <h3><%= users.length %></h3>
+            </div>
+            <i class="fa-solid fa-users fs-1 opacity-50"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0 bg-success text-white p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="mb-1">Total Listings</h6>
+              <h3><%= listings.length %></h3>
+            </div>
+            <i class="fa-solid fa-hotel fs-1 opacity-50"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0 bg-warning text-dark p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="mb-1">Total Bookings</h6>
+              <h3><%= bookings.length %></h3>
+            </div>
+            <i class="fa-solid fa-calendar-check fs-1 opacity-50"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0 bg-info text-white p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="mb-1">Total Reviews</h6>
+              <h3><%= reviews.length %></h3>
+            </div>
+            <i class="fa-solid fa-star fs-1 opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Management Tabs -->
+    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab" aria-controls="users" aria-selected="true">
+          Users
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="listings-tab" data-bs-toggle="tab" data-bs-target="#listings" type="button" role="tab" aria-controls="listings" aria-selected="false">
+          Listings
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab" aria-controls="bookings" aria-selected="false">
+          Bookings
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">
+          Reviews
+        </button>
+      </li>
+    </ul>
+
+    <!-- Tabs Content -->
+    <div class="tab-content" id="adminTabsContent">
+      <!-- Users Tab -->
+      <div class="tab-pane fade show active bg-white p-3 rounded border shadow-sm" id="users" role="tabpanel" aria-labelledby="users-tab">
+        <table class="table table-striped table-hover align-middle">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Verified</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% users.forEach(u => { %>
+              <tr>
+                <td>@<%= u.username %></td>
+                <td><%= u.email %></td>
+                <td><span class="badge bg-<%= u.isVerified ? 'success' : 'danger' %>"><%= u.isVerified %></span></td>
+                <td><span class="badge bg-secondary"><%= u.role %></span></td>
+                <td>
+                  <% if (u.role !== 'admin') { %>
+                    <form action="/admin/users/<%= u._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to delete this user account?')">
+                      <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                    </form>
+                  <% } else { %>
+                    <span class="text-muted small">Cannot delete admin</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Listings Tab -->
+      <div class="tab-pane fade bg-white p-3 rounded border shadow-sm" id="listings" role="tabpanel" aria-labelledby="listings-tab">
+        <table class="table table-striped table-hover align-middle">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Owner</th>
+              <th>Location</th>
+              <th>Price</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% listings.forEach(l => { %>
+              <tr>
+                <td><%= l.title %></td>
+                <td>@<%= l.owner ? l.owner.username : 'Unknown' %></td>
+                <td><%= l.location %>, <%= l.country %></td>
+                <td>&#x20B9; <%= l.price %></td>
+                <td>
+                  <form action="/admin/listings/<%= l._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to delete this listing?')">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Bookings Tab -->
+      <div class="tab-pane fade bg-white p-3 rounded border shadow-sm" id="bookings" role="tabpanel" aria-labelledby="bookings-tab">
+        <table class="table table-striped table-hover align-middle">
+          <thead>
+            <tr>
+              <th>Listing</th>
+              <th>Guest</th>
+              <th>Dates</th>
+              <th>Price</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% bookings.forEach(b => { %>
+              <tr>
+                <td><%= b.listing ? b.listing.title : 'Deleted Listing' %></td>
+                <td>@<%= b.guest ? b.guest.username : 'Deleted Guest' %></td>
+                <td><%= b.checkIn.toLocaleDateString() %> - <%= b.checkOut.toLocaleDateString() %></td>
+                <td>&#x20B9; <%= b.totalPrice %></td>
+                <td><span class="badge bg-<%= b.status === 'confirmed' ? 'success' : (b.status === 'cancelled' ? 'secondary' : 'warning') %>"><%= b.status %></span></td>
+                <td>
+                  <% if (b.status !== 'cancelled') { %>
+                    <form action="/admin/bookings/<%= b._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to cancel this booking?')">
+                      <button type="submit" class="btn btn-outline-danger btn-sm">Cancel Booking</button>
+                    </form>
+                  <% } else { %>
+                    <span class="text-muted small">Already Cancelled</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Reviews Tab -->
+      <div class="tab-pane fade bg-white p-3 rounded border shadow-sm" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+        <table class="table table-striped table-hover align-middle">
+          <thead>
+            <tr>
+              <th>Author</th>
+              <th>Comment</th>
+              <th>Rating</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% reviews.forEach(r => { %>
+              <tr>
+                <td>@<%= r.author ? r.author.username : 'Unknown' %></td>
+                <td><%= r.comment %></td>
+                <td><%= r.rating %> <i class="fa-solid fa-star text-warning small"></i></td>
+                <td><%= r.createdAt.toLocaleDateString() %></td>
+                <td>
+                  <form action="/admin/reviews/<%= r._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to delete this review?')">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

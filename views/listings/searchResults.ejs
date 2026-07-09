@@ -2,7 +2,7 @@
 
 <script>
   const mapToken = "<%= process.env.MAP_TOKEN %>";
-  const listings = <%- JSON.stringify(listings) %>;
+  const listings = <%- JSON.stringify(listings).replace(/</g, '\\u003c') %>;
 </script>
 
 <style>
@@ -30,7 +30,7 @@
           <a href="/listings/<%= listing._id %>" class="listing-link">
             <div class="card listing-card h-100 shadow-sm">
               <img
-                src="<%= listing.image.url %>"
+                src="<%= listing.image && listing.image.length > 0 ? listing.image[0].url : 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?q=80&w=2832&auto=format&fit=crop' %>"
                 class="card-img-top"
                 alt="listing_image"
                 style="height: 18rem; object-fit: cover"
@@ -46,6 +46,29 @@
         </div>
         <% }) %>
       </div>
+
+      <!-- Pagination Controls -->
+      <% if (totalPages > 1) { %>
+      <nav aria-label="Page navigation" class="mt-4 mb-5">
+        <ul class="pagination justify-content-center">
+          <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+            <a class="page-link" href="/listings/search?q=<%= encodeURIComponent(query) %>&page=<%= currentPage - 1 %>&limit=<%= limit %>" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+              <a class="page-link" href="/listings/search?q=<%= encodeURIComponent(query) %>&page=<%= i %>&limit=<%= limit %>"><%= i %></a>
+            </li>
+          <% } %>
+          <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+            <a class="page-link" href="/listings/search?q=<%= encodeURIComponent(query) %>&page=<%= currentPage + 1 %>&limit=<%= limit %>" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <% } %>
 
       <% } %>
     </div>

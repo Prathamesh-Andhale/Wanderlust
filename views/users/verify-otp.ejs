@@ -1,0 +1,47 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-3">
+  <div class="col-md-6 offset-md-3 col-sm-8 offset-sm-2">
+    <div class="card shadow-sm p-4">
+      <h2 class="text-center mb-3">Verify Your Email</h2>
+      <p class="text-muted text-center mb-4">
+        A 6-digit verification code has been sent to <strong><%= email %></strong>. 
+        Please enter it below to activate your account.
+      </p>
+
+      <form action="/verify-otp" method="post" class="needs-validation" novalidate>
+        <input type="hidden" name="email" value="<%= email %>">
+
+        <div class="mb-3">
+          <label for="otp" class="form-label fw-medium">Verification Code</label>
+          <input
+            type="text"
+            name="otp"
+            id="otp"
+            class="form-control text-center fs-4 tracking-widest"
+            placeholder="000000"
+            maxlength="6"
+            pattern="^[0-9]{6}$"
+            required
+            autocomplete="one-time-code"
+          />
+          <div class="invalid-feedback text-center">Please enter a valid 6-digit number.</div>
+        </div>
+
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-success btn-lg">Verify & Activate</button>
+        </div>
+      </form>
+
+      <hr class="my-4">
+
+      <form action="/resend-otp" method="post" class="text-center">
+        <input type="hidden" name="email" value="<%= email %>">
+        <p class="mb-0 text-muted">
+          Didn't receive the code? 
+          <button type="submit" class="btn btn-link p-0 align-baseline">Resend OTP</button>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,121 @@
+<% layout("/layouts/boilerplate") %>
+
+<!-- Socket.io client script -->
+<script src="/socket.io/socket.io.js"></script>
+
+<div class="row mt-4">
+  <div class="col-md-8 offset-md-2">
+    <div class="card shadow-sm border-0">
+      <!-- Chat Header -->
+      <div class="card-header bg-dark text-white p-3 d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+          <a href="/messages" class="text-white me-3"><i class="fa-solid fa-arrow-left fs-5"></i></a>
+          <img
+            src="<%= recipient.profileImage && recipient.profileImage.url ? recipient.profileImage.url : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' %>"
+            class="rounded-circle border me-2"
+            style="width: 40px; height: 40px; object-fit: cover;"
+            alt="Profile photo"
+          />
+          <div>
+            <h5 class="mb-0">Chatting with @<%= recipient.username %></h5>
+            <small class="text-white-50 small">Listing: <%= convo.listing ? convo.listing.title : 'Deleted Listing' %></small>
+          </div>
+        </div>
+        <a href="/listings/<%= convo.listing._id %>" class="btn btn-sm btn-outline-light">View Listing</a>
+      </div>
+
+      <!-- Chat Messages Body -->
+      <div class="card-body bg-light overflow-y-auto" id="chatThread" style="height: 400px; padding: 20px;">
+        <% if (messages.length === 0) { %>
+          <div class="text-center text-muted my-5" id="noMessages">
+            <p>Send the first message to start the conversation!</p>
+          </div>
+        <% } else { %>
+          <div class="d-flex flex-column gap-3">
+            <% messages.forEach(msg => { %>
+              <% const isMe = msg.sender._id.toString() === currUser._id.toString(); %>
+              <div class="d-flex flex-column <%= isMe ? 'align-items-end' : 'align-items-start' %>">
+                <div class="rounded-3 p-3 max-w-75 shadow-sm <%= isMe ? 'bg-danger text-white' : 'bg-white text-dark' %>" style="max-width: 70%;">
+                  <p class="mb-0"><%= msg.text %></p>
+                </div>
+                <small class="text-muted mt-1 px-2" style="font-size: 0.7rem;"><%= msg.createdAt.toLocaleTimeString() %></small>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Chat Input Footer -->
+      <div class="card-footer bg-white p-3">
+        <form action="/messages/t/<%= convo._id %>" method="POST" id="msgForm">
+          <div class="input-group">
+            <input
+              type="text"
+              name="text"
+              id="msgText"
+              class="form-control py-2"
+              placeholder="Type your message..."
+              required
+              autocomplete="off"
+            />
+            <button class="btn btn-danger px-4" type="submit">
+              <i class="fa-regular fa-paper-plane me-1"></i>Send
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const thread = document.getElementById("chatThread");
+    const msgForm = document.getElementById("msgForm");
+    const noMessages = document.getElementById("noMessages");
+
+    // Scroll to bottom
+    const scrollToBottom = () => {
+      thread.scrollTop = thread.scrollHeight;
+    };
+    scrollToBottom();
+
+    // Socket.io setup
+    const socket = io();
+
+    // Register active user
+    socket.emit("registerUser", "<%= currUser._id %>");
+
+    // Listen for incoming messages
+    socket.on("receiveMessage", (data) => {
+      // Check if message is for this conversation
+      if (data.convoId === "<%= convo._id %>") {
+        if (noMessages) noMessages.remove();
+
+        const isMe = false; // It's from other user
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `d-flex flex-column align-items-start`;
+
+        messageDiv.innerHTML = `
+          <div class="rounded-3 p-3 shadow-sm bg-white text-dark" style="max-width: 70%;">
+            <p class="mb-0">${data.text}</p>
+          </div>
+          <small class="text-muted mt-1 px-2" style="font-size: 0.7rem;">
+            ${new Date(data.createdAt).toLocaleTimeString()}
+          </small>
+        `;
+
+        // If gap-3 is container
+        let container = thread.querySelector(".d-flex.flex-column.gap-3");
+        if (!container) {
+          container = document.createElement("div");
+          container.className = "d-flex flex-column gap-3";
+          thread.appendChild(container);
+        }
+
+        container.appendChild(messageDiv);
+        scrollToBottom();
+      }
+    });
+  });
+</script>

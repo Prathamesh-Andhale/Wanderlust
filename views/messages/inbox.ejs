@@ -1,0 +1,52 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-4">
+  <div class="col-md-8 offset-md-2">
+    <h2 class="mb-4"><i class="fa-regular fa-envelope me-2"></i>My Messages</h2>
+
+    <% if (conversations.length === 0) { %>
+      <div class="text-center py-5 bg-white border rounded shadow-sm">
+        <p class="text-muted fs-5 mb-0">Your inbox is empty.</p>
+        <p class="text-muted small">Send a message to a host on their listing page to start a chat.</p>
+        <a href="/listings" class="btn btn-danger mt-2">Explore Listings</a>
+      </div>
+    <% } else { %>
+      <div class="list-group shadow-sm">
+        <% conversations.forEach(convo => { %>
+          <% const otherUser = convo.participants.find(p => p._id.toString() !== currUser._id.toString()); %>
+          <a href="/messages/t/<%= convo._id %>" class="list-group-item list-group-item-action p-4 border-bottom d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+              <img
+                src="<%= otherUser.profileImage && otherUser.profileImage.url ? otherUser.profileImage.url : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' %>"
+                class="rounded-circle border me-3"
+                style="width: 50px; height: 50px; object-fit: cover;"
+                alt="Profile photo"
+              />
+              <div>
+                <h5 class="mb-1">@<%= otherUser.username %></h5>
+                <p class="mb-0 text-muted small"><strong>Listing:</strong> <%= convo.listing ? convo.listing.title : 'Deleted Listing' %></p>
+                <% if (convo.lastMessage) { %>
+                  <p class="mb-0 text-secondary text-truncate mt-1" style="max-width: 350px;">
+                    <strong><%= convo.lastMessage.sender.username === currUser.username ? 'You' : convo.lastMessage.sender.username %>:</strong> 
+                    <%= convo.lastMessage.text %>
+                  </p>
+                <% } else { %>
+                  <p class="mb-0 text-muted small italic">No messages yet.</p>
+                <% } %>
+              </div>
+            </div>
+            
+            <div class="text-end">
+              <% if (convo.lastMessage) { %>
+                <small class="text-muted d-block mb-1"><%= convo.lastMessage.createdAt.toLocaleDateString() %></small>
+              <% } %>
+              <% if (convo.unreadCount > 0) { %>
+                <span class="badge bg-danger rounded-pill"><%= convo.unreadCount %> new</span>
+              <% } %>
+            </div>
+          </a>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</div>

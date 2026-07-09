@@ -1,0 +1,154 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-4">
+  <div class="col-12">
+    <h2 class="mb-4">My Bookings & Reservations</h2>
+
+    <!-- Tabs Nav -->
+    <ul class="nav nav-tabs mb-4" id="bookingTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="trips-tab" data-bs-toggle="tab" data-bs-target="#trips" type="button" role="tab" aria-controls="trips" aria-selected="true">
+          <i class="fa-solid fa-plane me-2"></i>My Trips (As Guest)
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="reservations-tab" data-bs-toggle="tab" data-bs-target="#reservations" type="button" role="tab" aria-controls="reservations" aria-selected="false">
+          <i class="fa-solid fa-house-chimney me-2"></i>Reservations (As Host)
+        </button>
+      </li>
+    </ul>
+
+    <!-- Tabs Content -->
+    <div class="tab-content" id="bookingTabsContent">
+      
+      <!-- Trips Tab -->
+      <div class="tab-pane fade show active" id="trips" role="tabpanel" aria-labelledby="trips-tab">
+        <% if (guestBookings.length === 0) { %>
+          <div class="text-center py-5">
+            <p class="text-muted fs-5">You have no upcoming or past trips.</p>
+            <a href="/listings" class="btn btn-danger mt-2">Explore Listings</a>
+          </div>
+        <% } else { %>
+          <div class="row row-cols-1 row-cols-md-2 g-4">
+            <% guestBookings.forEach(booking => { %>
+              <div class="col">
+                <div class="card h-100 shadow-sm border-0">
+                  <div class="row g-0 h-100">
+                    <div class="col-sm-4">
+                      <img src="<%= booking.listing.image && booking.listing.image.length > 0 ? booking.listing.image[0].url : 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?q=80&w=2832&auto=format&fit=crop' %>" class="img-fluid rounded-start h-100 w-100" style="object-fit: cover; min-height: 120px;" alt="...">
+                    </div>
+                    <div class="col-sm-8">
+                      <div class="card-body d-flex flex-column h-100">
+                        <h5 class="card-title text-truncate mb-1"><%= booking.listing.title %></h5>
+                        <p class="text-muted small mb-2"><%= booking.listing.location %>, <%= booking.listing.country %></p>
+                        
+                        <div class="small mb-3">
+                          <div><strong>Check-in:</strong> <%= booking.checkIn.toDateString() %></div>
+                          <div><strong>Check-out:</strong> <%= booking.checkOut.toDateString() %></div>
+                          <div><strong>Guests:</strong> <%= booking.numberOfGuests %> &bull; <strong>Total:</strong> &#x20B9; <%= booking.totalPrice.toLocaleString("en-IN") %></div>
+                        </div>
+
+                        <div class="mt-auto d-flex align-items-center justify-content-between">
+                          <div>
+                            <span class="badge bg-<%= booking.status === 'confirmed' ? 'success' : (booking.status === 'cancelled' ? 'secondary' : 'warning') %>"><%= booking.status %></span>
+                            <span class="badge bg-<%= booking.paymentStatus === 'paid' ? 'success' : (booking.paymentStatus === 'refunded' ? 'info' : 'danger') %>"><%= booking.paymentStatus %></span>
+                          </div>
+
+                          <% if (booking.status === 'pending' || booking.status === 'confirmed') { %>
+                            <form action="/bookings/<%= booking._id %>/cancel" method="POST" onsubmit="return confirm('Are you sure you want to cancel this booking? under 48 hours notice refunds are not guaranteed.')">
+                              <button type="submit" class="btn btn-outline-danger btn-sm">Cancel</button>
+                            </form>
+                          <% } %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Reservations Tab -->
+      <div class="tab-pane fade" id="reservations" role="tabpanel" aria-labelledby="reservations-tab">
+        <% if (hostReservations.length === 0) { %>
+          <div class="text-center py-5">
+            <p class="text-muted fs-5">No guests have booked your properties yet.</p>
+          </div>
+        <% } else { %>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle bg-white rounded shadow-sm">
+              <thead class="table-dark">
+                <tr>
+                  <th>Listing</th>
+                  <th>Guest</th>
+                  <th>Dates</th>
+                  <th>Guests</th>
+                  <th>Payout</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% hostReservations.forEach(booking => { %>
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img src="<%= booking.listing.image && booking.listing.image.length > 0 ? booking.listing.image[0].url : 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?q=80&w=2832&auto=format&fit=crop' %>" class="rounded me-2" style="width: 50px; height: 50px; object-fit: cover;" />
+                        <span class="text-truncate fw-medium" style="max-width: 150px;"><%= booking.listing.title %></span>
+                      </div>
+                    </td>
+                    <td>@<%= booking.guest.username %></td>
+                    <td>
+                      <div class="small"><%= booking.checkIn.toLocaleDateString() %> - <%= booking.checkOut.toLocaleDateString() %></div>
+                    </td>
+                    <td><%= booking.numberOfGuests %></td>
+                    <td class="fw-semibold text-success">&#x20B9; <%= booking.totalPrice.toLocaleString("en-IN") %></td>
+                    <td>
+                      <span class="badge bg-<%= booking.status === 'confirmed' ? 'success' : (booking.status === 'cancelled' ? 'secondary' : 'warning') %>"><%= booking.status %></span>
+                    </td>
+                    <td>
+                      <% if (booking.status === 'pending' || booking.status === 'confirmed') { %>
+                        <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelModal-<%= booking._id %>">Cancel</button>
+
+                        <!-- Cancel Modal -->
+                        <div class="modal fade" id="cancelModal-<%= booking._id %>" tabindex="-1" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <form action="/bookings/<%= booking._id %>/cancel" method="POST">
+                              <div class="modal-content text-start">
+                                <div class="modal-header">
+                                  <h5 class="modal-title">Cancel Reservation</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                  <p>Are you sure you want to cancel the reservation for <strong>@<%= booking.guest.username %></strong>?</p>
+                                  <div class="mb-3">
+                                    <label class="form-label">Reason for cancellation</label>
+                                    <textarea name="reason" class="form-control" rows="3" placeholder="e.g., Property maintenance required" required></textarea>
+                                  </div>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+
+                      <% } else { %>
+                        <span class="text-muted small">No actions available</span>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+
+    </div>
+  </div>
+</div>

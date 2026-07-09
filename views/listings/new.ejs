@@ -32,14 +32,43 @@
         <div class="invalid-feedback">Please enter a short description</div>
       </div>
       <div class="mb-3">
-        <label for="image" class="form-lable">Upload Listing Image</label>
+        <label for="image" class="form-label">Upload Listing Images (Max 5)</label>
         <input
           type="file"
-          name="listing[image][url]"
-          placeholder="enter image url"
+          name="listing[image]"
           class="form-control"
+          multiple
           required
         />
+      </div>
+      <div class="row">
+        <div class="mb-3 col-md-6">
+          <label for="category" class="form-label">Category</label>
+          <select name="listing[category]" id="category" class="form-select" required>
+            <option value="Trending">Trending</option>
+            <option value="Rooms">Rooms</option>
+            <option value="Iconic Cities">Iconic Cities</option>
+            <option value="Mountains">Mountains</option>
+            <option value="Castles">Castles</option>
+            <option value="Amazing Pools">Amazing Pools</option>
+            <option value="Camping">Camping</option>
+            <option value="Farms">Farms</option>
+            <option value="Arctic">Arctic</option>
+          </select>
+        </div>
+        <div class="mb-3 col-md-6">
+          <label for="maxGuests" class="form-label">Maximum Guests</label>
+          <input
+            type="number"
+            name="listing[maxGuests]"
+            id="maxGuests"
+            placeholder="2"
+            class="form-control"
+            min="1"
+            required
+          />
+          <div class="invalid-feedback">Please enter maximum guest capacity</div>
+        </div>
       </div>
       <div class="row">
         <div class="mb-3 col-md-4">

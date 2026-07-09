@@ -1,67 +1,5 @@
-// // const joi = require("joi")
-// // module.exports.listingSchema = joi.object({
-// //     listing : joi.object({
-// //         title : joi.string().required(),
-// //         description : joi.string().required(),
-// //         price : joi.number().required().min(0),
-// //         location : joi.string().required(),
-// //         country : joi.string().required(),
-// //         // image : joi.string().allow("",null),
-// //         image: joi.object({
-// //             fileName: joi.string().allow("", null),
-// //             url: joi.string().allow("", null),
-// //           }),
-// //     }).required(),
-// // })
-
-// // MAIN
-// const joi = require("joi");
-
-// const listingSchema = joi.object({
-//   listing: joi
-//     .object({
-//       title: joi.string().required(),
-//       description: joi.string().required(),
-//       loaction: joi.string().required(),
-//       country: joi.string().required(),
-//       price: joi.number().required(),
-//     })
-//     .required(),
-// });
-// module.exports = listingSchema;
-
-// module.exports.reviewSchema = joi.object({
-//   review: joi
-//     .object({
-//       rating: joi.number().required().min(1).max(5),
-//       comment: joi.string().required(),
-//     })
-//     .required(),
-// });
-
-// const joi = require("joi");
-// module.exports.listingSchema = joi.object({
-//   listing: joi
-//     .object({
-//       title: joi.string().required(),
-//       description: joi.string().required(),
-//       location: joi.string().required(),
-//       country: joi.string().required(),
-//       price: joi.number().required(),
-//     })
-//     .required(),
-// });
-
-// module.exports.reviewSchema = joi.object({
-//   review: joi
-//     .object({
-//       rating: joi.number().required().min(1).max(5),
-//       comment: joi.string().required(),
-//     })
-//     .required(),
-// });
-
 const joi = require("joi");
+
 module.exports.listingSchema = joi.object({
   listing: joi
     .object({
@@ -69,16 +7,31 @@ module.exports.listingSchema = joi.object({
       description: joi.string().required(),
       location: joi.string().required(),
       country: joi.string().required(),
-      price: joi.number().required(),
-      image: joi.object({
-        url: joi
-          .string()
-          .allow("", null)
-          .default(
-            "https://images.unsplash.com/photo-1564501049412-61c2a3083791?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          ),
-      }),
-      contact: joi.number().required(),
+      price: joi.number().required().min(0),
+      image: joi.any().allow("", null),
+      category: joi
+        .string()
+        .valid(
+          "Trending",
+          "Rooms",
+          "Iconic Cities",
+          "Mountains",
+          "Castles",
+          "Amazing Pools",
+          "Camping",
+          "Farms",
+          "Arctic"
+        )
+        .optional(),
+      maxGuests: joi.number().min(1).optional(),
+      contact: joi
+        .string()
+        .pattern(/^\+?[1-9]\d{1,14}$|^[0-9]{10}$/)
+        .required()
+        .messages({
+          "string.pattern.base":
+            "Contact must be a valid phone number (10 digits or E.164 format)",
+        }),
     })
     .required(),
 });
@@ -88,6 +41,16 @@ module.exports.reviewSchema = joi.object({
     .object({
       rating: joi.number().required().min(1).max(5),
       comment: joi.string().required(),
+    })
+    .required(),
+});
+
+module.exports.bookingSchema = joi.object({
+  booking: joi
+    .object({
+      checkIn: joi.date().iso().required(),
+      checkOut: joi.date().iso().required(),
+      numberOfGuests: joi.number().min(1).required(),
     })
     .required(),
 });

@@ -59,6 +59,12 @@
         <a class="nav-link" href="/signup"><b>sign up</b></a>
         <a class="nav-link" href="/login"><b>login</b></a>
         <%}%> <%if(currUser) {%>
+        <% if (currUser.role === 'admin') { %>
+        <a class="nav-link text-danger" href="/admin"><b>Admin Dashboard</b></a>
+        <% } %>
+        <a class="nav-link" href="/profile"><b>Profile</b></a>
+        <a class="nav-link" href="/bookings/history"><b>My Bookings</b></a>
+        <a class="nav-link" href="/messages"><b>Messages</b></a>
         <a class="nav-link" href="/logout"><b>log out</b></a>
         <%}%>
       </div>

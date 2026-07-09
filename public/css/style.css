@@ -125,3 +125,19 @@ body {
   border-radius: 15px;
   border: gray solid 2px;
 }
+
+/* Custom Flatpickr styling for disabled/booked dates */
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.flatpickr-disabled:hover {
+  background: repeating-linear-gradient(
+    45deg,
+    #f8d7da,
+    #f8d7da 4px,
+    #f5c6cb 4px,
+    #f5c6cb 8px
+  ) !important;
+  color: #721c24 !important;
+  cursor: not-allowed !important;
+  text-decoration: line-through;
+  opacity: 0.85;
+}

@@ -1,3 +1,21 @@
 .env
 node_modules/
 **/.DS_Store
+
+# Local MongoDB / WiredTiger database files
+WiredTiger*
+_mdb_catalog.wt
+collection-*.wt
+index-*.wt
+mongod.lock
+storage.bson
+sizeStorer.wt
+diagnostic.data/
+journal/
+
+# Logging
+logs/
+*.log
+
+# Test runs
+test-results/

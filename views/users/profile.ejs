@@ -1,0 +1,138 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-4">
+  <div class="col-md-4 mb-4">
+    <!-- Profile Card -->
+    <div class="card shadow-sm border-0 p-4 text-center">
+      <div class="mb-3">
+        <img
+          src="<%= user.profileImage && user.profileImage.url ? user.profileImage.url : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' %>"
+          class="rounded-circle border"
+          style="width: 150px; height: 150px; object-fit: cover;"
+          alt="Profile Image"
+        />
+      </div>
+      <h4>@<%= user.username %></h4>
+      <p class="text-muted small"><%= user.email %></p>
+      <span class="badge bg-secondary mb-3"><%= user.role.toUpperCase() %></span>
+      
+      <hr>
+
+      <div class="text-start small mt-3">
+        <p><i class="fa-solid fa-calendar me-2"></i>Joined: <%= user._id.getTimestamp().toDateString() %></p>
+        <p><i class="fa-solid fa-circle-check me-2 text-success"></i>Verified Status: <%= user.isVerified ? "Verified" : "Unverified" %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <!-- Tabs Nav -->
+    <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="edit-profile-tab" data-bs-toggle="tab" data-bs-target="#edit-profile" type="button" role="tab" aria-controls="edit-profile" aria-selected="true">
+          <i class="fa-solid fa-user-gear me-2"></i>Edit Profile
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="my-listings-tab" data-bs-toggle="tab" data-bs-target="#my-listings" type="button" role="tab" aria-controls="my-listings" aria-selected="false">
+          <i class="fa-solid fa-list me-2"></i>My Listings (<%= userListings.length %>)
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="wishlist-tab" data-bs-toggle="tab" data-bs-target="#wishlist" type="button" role="tab" aria-controls="wishlist" aria-selected="false">
+          <i class="fa-solid fa-heart me-2"></i>Wishlist (<%= user.wishlist ? user.wishlist.length : 0 %>)
+        </button>
+      </li>
+    </ul>
+
+    <!-- Tabs Content -->
+    <div class="tab-content" id="profileTabsContent">
+      <!-- Edit Profile -->
+      <div class="tab-pane fade show active" id="edit-profile" role="tabpanel" aria-labelledby="edit-profile-tab">
+        <div class="card shadow-sm border p-4 bg-white">
+          <form action="/profile?_method=PUT" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+
+            <div class="mb-3">
+              <label for="username" class="form-label fw-medium">Username</label>
+              <input type="text" name="profile[username]" id="username" value="<%= user.username %>" class="form-control" required />
+              <div class="invalid-feedback">Please choose a username</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label fw-medium">Email Address</label>
+              <input type="email" name="profile[email]" id="email" value="<%= user.email %>" class="form-control" required />
+              <div class="invalid-feedback">Please enter a valid email</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="profileImage" class="form-label fw-medium">Change Profile Photo</label>
+              <input type="file" name="profileImage" id="profileImage" class="form-control" />
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+              <button type="submit" class="btn btn-success py-2">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- My Listings -->
+      <div class="tab-pane fade" id="my-listings" role="tabpanel" aria-labelledby="my-listings-tab">
+        <% if (userListings.length === 0) { %>
+          <div class="text-center py-5 bg-white border rounded">
+            <p class="text-muted fs-5">You haven't listed any properties yet.</p>
+            <a href="/listings/new" class="btn btn-danger mt-2">Airbnb your home</a>
+          </div>
+        <% } else { %>
+          <div class="row row-cols-1 row-cols-md-2 g-4">
+            <% userListings.forEach(listing => { %>
+              <div class="col">
+                <div class="card h-100 shadow-sm border-0">
+                  <img src="<%= listing.image && listing.image.length > 0 ? listing.image[0].url : 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?q=80&w=2832&auto=format&fit=crop' %>" class="card-img-top" style="height: 150px; object-fit: cover;" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title text-truncate"><%= listing.title %></h5>
+                    <p class="card-text text-success fw-bold">&#x20B9; <%= listing.price.toLocaleString("en-IN") %> / night</p>
+                    <div class="d-flex justify-content-between mt-3">
+                      <a href="/listings/<%= listing._id %>" class="btn btn-sm btn-outline-dark">View</a>
+                      <a href="/listings/<%= listing._id %>/edit" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Wishlist -->
+      <div class="tab-pane fade" id="wishlist" role="tabpanel" aria-labelledby="wishlist-tab">
+        <% if (!user.wishlist || user.wishlist.length === 0) { %>
+          <div class="text-center py-5 bg-white border rounded">
+            <p class="text-muted fs-5">Your wishlist is empty.</p>
+            <a href="/listings" class="btn btn-danger mt-2">Explore Listings</a>
+          </div>
+        <% } else { %>
+          <div class="row row-cols-1 row-cols-md-2 g-4">
+            <% user.wishlist.forEach(listing => { %>
+              <div class="col">
+                <div class="card h-100 shadow-sm border-0">
+                  <img src="<%= listing.image && listing.image.length > 0 ? listing.image[0].url : 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?q=80&w=2832&auto=format&fit=crop' %>" class="card-img-top" style="height: 150px; object-fit: cover;" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title text-truncate"><%= listing.title %></h5>
+                    <p class="card-text text-success fw-bold">&#x20B9; <%= listing.price.toLocaleString("en-IN") %> / night</p>
+                    <div class="d-flex justify-content-between mt-3">
+                      <a href="/listings/<%= listing._id %>" class="btn btn-sm btn-outline-dark">View</a>
+                      <form action="/listings/<%= listing._id %>/wishlist?_method=DELETE" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>

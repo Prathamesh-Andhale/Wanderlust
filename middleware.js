@@ -1,7 +1,7 @@
 const Listing = require("./models/listing");
 const Review = require("./models/review");
 const ExpressError = require("./utils/ExpressError.js");
-const { listingSchema, reviewSchema } = require("./schema.js");
+const { listingSchema, reviewSchema, bookingSchema } = require("./schema.js");
 
 module.exports.isLoggedin = (req, res, next) => {
   if (!req.isAuthenticated()) {
@@ -22,6 +22,10 @@ module.exports.saveRedirectUrl = (req, res, next) => {
 module.exports.isOwner = async (req, res, next) => {
   let { id } = req.params;
   let listing = await Listing.findById(id);
+  if (!listing) {
+    req.flash("error", "Listing you requested for does not exist!");
+    return res.redirect("/listings");
+  }
   if (!listing.owner.equals(res.locals.currUser._id)) {
     req.flash("error", "you are not the owner of this listing");
     return res.redirect(`/listings/${id}`);
@@ -47,14 +51,59 @@ module.exports.validateReview = (req, res, next) => {
     next();
   }
 };
+module.exports.validateBooking = (req, res, next) => {
+  let { error } = bookingSchema.validate(req.body);
+  if (error) {
+    const listingId = req.params.id;
+    if (listingId) {
+      req.flash("error", "Please select valid check-in and check-out dates before reserving.");
+      return res.redirect(`/listings/${listingId}`);
+    }
+    let errMsg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(400, errMsg);
+  } else {
+    next();
+  }
+};
 
 module.exports.isReviewAuthor = async (req, res, next) => {
   let { id, reviewId } = req.params;
   let review = await Review.findById(reviewId);
-  console.log(review.author);
+  if (!review) {
+    req.flash("error", "Review you requested for does not exist!");
+    return res.redirect(`/listings/${id}`);
+  }
   if (!review.author.equals(res.locals.currUser._id)) {
     req.flash("error", "you are not the author of this review");
     return res.redirect(`/listings/${id}`);
   }
   next();
+};
+
+module.exports.isBookingOwnerOrHost = async (req, res, next) => {
+  let { bookingId } = req.params;
+  const Booking = require("./models/booking");
+  const booking = await Booking.findById(bookingId).populate("listing");
+  if (!booking) {
+    req.flash("error", "Booking not found.");
+    return res.redirect("/listings");
+  }
+  
+  const isGuest = booking.guest.equals(res.locals.currUser._id);
+  const isHost = booking.listing.owner.equals(res.locals.currUser._id);
+  
+  if (!isGuest && !isHost && res.locals.currUser.role !== "admin") {
+    req.flash("error", "You are not authorized to access this booking.");
+    return res.redirect("/listings");
+  }
+  next();
+};
+
+module.exports.isAdmin = (req, res, next) => {
+  if (req.user && req.user.role === "admin") {
+    next();
+  } else {
+    req.flash("error", "Access denied. Admins only.");
+    res.redirect("/listings");
+  }
 };

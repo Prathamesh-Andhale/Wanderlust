@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - ATLASDB_URL=mongodb://db:27017/wanderlust
+      - NODE_ENV=production
+      - SECRET=dev_session_secret_key
+      - CLOUD_NAME=placeholder_cloud_name
+      - CLOUD_API_KEY=placeholder_cloud_key
+      - CLOUD_API_SECRET=placeholder_cloud_secret
+      - MAP_TOKEN=placeholder_map_token
+    depends_on:
+      - db
+  db:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
